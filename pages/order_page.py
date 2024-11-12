@@ -1,4 +1,3 @@
-import time
 
 import allure
 from pages.home_page import HomePage
