@@ -4,7 +4,7 @@ from selenium import webdriver
 @pytest.fixture(scope="module")
 def driver():
     # Инициализация браузера
-    driver = webdriver.Chrome()
+    driver = webdriver.Firefox()
     driver.maximize_window()
     # Передача браузера в тесты
     yield driver
