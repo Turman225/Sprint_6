@@ -1,8 +1,6 @@
-
 import allure
 from pages.home_page import HomePage
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
@@ -25,36 +23,36 @@ class OrderPage(HomePage):
 
     # Получаем текст статуса отправки формы
     def get_status_text(self):
-        text = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.status_text))
+        text = self.find_element(self.status_text, EC.presence_of_element_located)
         return text.text
 
     @allure.step("Нажимаем на список станций")
     def click_station_input(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.station_input)).click()
+        self.find_element(self.station_input).click()
 
     @allure.step("Нажимаем на кнопку ДАЛЕЕ")
     def click_next_button(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.next_button)).click()
+        self.find_element(self.next_button).click()
 
     @allure.step("Нажимаем на кнопку ЗАКАЗАТЬ")
     def click_order_button(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.order_button)).click()
+        self.find_element(self.order_button).click()
 
     @allure.step("Нажимаем на выбранную дату")
     def click_selected_date(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.selected_date)).click()
+        self.find_element(self.selected_date).click()
 
     @allure.step("Нажимаем на кнопку со списком срока аренды")
     def click_period_list(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.period_button)).click()
+        self.find_element(self.period_button).click()
 
     @allure.step("Подтверждаем заказ")
     def click_accept_order_button(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.accept_order_button)).click()
+        self.find_element(self.accept_order_button).click()
 
     @allure.step("Нажимаем на кнопку ПОСМОТРЕТЬ СТАТУС")
     def click_look_status_button(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.look_status_button)).click()
+        self.find_element(self.look_status_button).click()
 
     @allure.step("Заполняем поля в форме 'Для кого самокат' данными")
     def fill_first_form(self, name=None, second_name=None, address=None, station=None, phone=None):
@@ -87,15 +85,15 @@ class OrderPage(HomePage):
     @allure.step("Выбираем станцию")
     def select_station(self, station):
         self.click_station_input()
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, f'//*[contains(text(), "{station}")]'))).click()
+        self.find_element((By.XPATH, f'//*[contains(text(), "{station}")]')).click()
 
     @allure.step("Выбираем срок аренды")
     def select_rental_period(self, priod):
         self.click_period_list()
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, f'//div[contains(text(), "{priod}")]'))).click()
+        self.find_element((By.XPATH, f'//div[contains(text(), "{priod}")]')).click()
 
     def select_color(self, color):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, f'//*[contains(text(), "{color}")]'))).click()
+        self.find_element((By.XPATH, f'//*[contains(text(), "{color}")]')).click()
 
     def check_order_has_been_placed(self):
         assert 'Заказ оформлен' in self.get_status_text(), f'{self.get_status_text()}'

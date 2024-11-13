@@ -1,42 +1,49 @@
-import pytest
 import allure
-import data as data
-import allure_data as test_cases
-from pages.order_page import OrderPage
-
+import data
 
 class TestOrderPage:
+    nav_bar_ordering_case = {"title": 'Проверка заказа самоката через кнопку "Заказать" в навигационном меню',
+             "description": 'Кнопка ЗАКАЗАТЬ, должна перенаправить на форму заполнения заказа. После заполнения первой формы,'
+                            'открывается вторая форма. При прохождении всех этапов заполнения должно выйти модальное окно с '
+                            'сообщением о успешной отправке заявки. Нажимаем на "Посмотреть статус" и после на логотип "ЯНДЕКС",'
+                            'при нажатии на логотип, должен произойти редирект на ДЗЕН',
+             }
+    center_page_ordering_case = {"title": 'Проверка заказа самоката через кнопку "Заказать" в центре страницы',
+               "description": 'Кнопка ЗАКАЗАТЬ, должна перенаправить на форму заполнения заказа. После заполнения первой формы,'
+                              'открывается вторая форма. При прохождении всех этапов заполнения должно выйти модальное окно с '
+                              'сообщением о успешной отправке заявки. Нажимаем на "Посмотреть статус" и после на логотип "Самокат",'
+                              'при нажатии на логотип открывается главная страница',
+               }
 
-    @pytest.fixture(autouse=True)
-    def setup_method(self, driver):
-        self.driver = driver
-        self.order_page = OrderPage(driver, data.URL)
+    @allure.title('{nav_bar_ordering_case["title"]}')
+    @allure.description('{nav_bar_ordering_case["description"]}')
+    def test_ordering_click_button_in_nav_bar(self, order_page):
+        order_page.open_page(data.URL)
+        order_page.click_order_button_in_nav_bar()
+        order_page.check_url('https://qa-scooter.praktikum-services.ru/order')
+        order_page.fill_first_form(data.order_data['name'][0], data.order_data['second_name'][0],
+                                        data.order_data['address'][0], data.order_data['station'][0],
+                                        data.order_data['phone'][0])
+        order_page.fill_second_form(data.order_data['date'][0], data.order_data['period'][0],
+                                         data.order_data['color'][0], data.order_data['comment'][0])
+        order_page.check_order_has_been_placed()
+        order_page.click_look_status_button()
+        order_page.click_yandex_logo()
+        order_page.switch_window()
+        order_page.check_url('https://dzen.ru/?yredirect=true')
 
-    @pytest.mark.parametrize("case, button, name, second_name, address, station, phone, date, period, color, comment", [
-        (test_cases.CASE_9, 'nav', 'Тестер', 'Тестович', 'К черту на куличики', 'Черкизовская', '+77221321122', '01.01.2024', 'сутки', 'чёрный жемчуг', 'привезите быстрее'),
-        (test_cases.CASE_10, 'center','Супер', 'Юзер', 'К Красной площади', 'Сокольники', '+71231232222', '12.11.2024', 'пятеро суток', 'серая безысходность', 'позвоните как привезете')
-    ])
-
-    def test_ordering(self, case, button, name, second_name, address, station, phone, date, period, color, comment):
-        allure.dynamic.title(case['title'])
-        allure.dynamic.description(case['description'])
-        self.run_test_ordering(button, name, second_name, address, station, phone, date, period, color, comment)
-
-    def run_test_ordering(self, button, name, second_name, address, station, phone, date, period, color, comment):
-        self.driver.get(data.URL)
-        if button == 'nav':
-            self.order_page.click_order_button_in_nav_bar()
-        else:
-            self.order_page.click_order_button_in_center_page()
-        self.order_page.check_url('https://qa-scooter.praktikum-services.ru/order')
-        self.order_page.fill_first_form(name, second_name, address, station, phone)
-        self.order_page.fill_second_form(date, period, color, comment)
-        self.order_page.check_order_has_been_placed()
-        self.order_page.click_look_status_button()
-        if button == 'nav':
-            self.order_page.click_yandex_logo()
-            self.order_page.switch_window()
-            self.order_page.check_url('https://dzen.ru/?yredirect=true')
-        else:
-            self.order_page.click_samokat_logo()
-            self.order_page.check_url(data.URL)
+    @allure.title('{center_page_ordering_case["title"]}')
+    @allure.description('{center_page_ordering_case["description"]}')
+    def test_ordering_click_button_in_center_page(self, order_page):
+        order_page.open_page(data.URL)
+        order_page.click_order_button_in_center_page()
+        order_page.check_url('https://qa-scooter.praktikum-services.ru/order')
+        order_page.fill_first_form(data.order_data['name'][1], data.order_data['second_name'][1],
+                                        data.order_data['address'][1], data.order_data['station'][1],
+                                        data.order_data['phone'][1])
+        order_page.fill_second_form(data.order_data['date'][1], data.order_data['period'][1],
+                                         data.order_data['color'][1], data.order_data['comment'][1])
+        order_page.check_order_has_been_placed()
+        order_page.click_look_status_button()
+        order_page.click_samokat_logo()
+        order_page.check_url(data.URL)

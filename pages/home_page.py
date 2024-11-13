@@ -2,7 +2,6 @@ import data
 import allure
 from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
@@ -22,13 +21,13 @@ class HomePage(BasePage):
 
     #Получаем список елементов аккордеона
     def get_according_heading_elem(self):
-        elems = WebDriverWait(self.driver, 10).until(EC.presence_of_all_elements_located(self.accordion_heading_elements))
+        elems = self.find_elements(self.accordion_heading_elements)
         return elems
 
     # Получаем текст ответа под вопросом
     def get_content_text(self, index, answer):
         self.click_ask(index)
-        text = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(answer))
+        text = self.find_element(answer, condition=EC.visibility_of_element_located)
         return text.text
 
     @allure.step('Нажимаем на стрелочку около вопроса')
@@ -37,13 +36,13 @@ class HomePage(BasePage):
 
     @allure.step('Нажимаем на кнопку ЗАКАЗАТЬ в навигационном меню')
     def click_order_button_in_nav_bar(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.order_button_in_nav_bar)).click()
+        self.find_element(self.order_button_in_nav_bar).click()
 
     @allure.step('Нажимаем на кнопку ЗАКАЗАТЬ в центре страницы')
     def click_order_button_in_center_page(self):
-        button = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.order_button_in_center_page))
+        button = self.find_element(self.order_button_in_center_page)
         location = button.location
-        self.driver.execute_script(f"window.scrollTo({location['x']}, {location['y']});")
+        self.scroll_to_elem(location)
         button.click()
 
     @allure.step("Проверяем соответствие текста ответа под выбранным вопросом")

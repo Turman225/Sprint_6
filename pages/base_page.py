@@ -12,6 +12,17 @@ class BasePage():
         self.driver = driver
         self.url = url
 
+    def open_page(self, url):
+        self.driver.get(url)
+
+    # Поиск элементов
+    def find_elements(self, locator, condition=EC.presence_of_all_elements_located):
+        return WebDriverWait(self.driver, 10).until(condition(locator))
+
+    # Поиск элемента
+    def find_element(self, locator, condition=EC.element_to_be_clickable):
+        return WebDriverWait(self.driver, 10).until(condition(locator))
+
     @allure.step('Нажимаем на логотип Яндекс')
     def click_yandex_logo(self):
         WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.yandex_logo)).click()
@@ -19,6 +30,9 @@ class BasePage():
     @allure.step('Нажимаем на логотип Самокат')
     def click_samokat_logo(self):
         WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.samokat_logo)).click()
+
+    def scroll_to_elem(self, location):
+        self.driver.execute_script(f"window.scrollTo({location['x']}, {location['y']});")
 
     #Скрол до футера
     def scroll_to_the_footer(self):
